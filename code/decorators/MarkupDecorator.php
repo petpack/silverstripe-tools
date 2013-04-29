@@ -49,15 +49,19 @@ class MarkupDecorator extends DataObjectDecorator {
 	}
 
 	protected function addItems( $filter, $set, $dataObject, $forChild, $request ) {
+		$isLive = Director::isLive();
 		foreach( $dataObject->MarkupItems($filter) as $item ) {
-			if( !$forChild || $item->AddToChildren ) {
-				if( $dataObject instanceof UserDefinedForm ) {
-					if( !$item->OnlyOnComplete || ($request->param('Action') == 'finished') ) {
+			if( !$item->OnlyOnLive || ($item->OnlyOnLive && $isLive) ) {
+				if( !$forChild || $item->AddToChildren ) {
+					if( $dataObject instanceof UserDefinedForm ) {
+						if( !$item->OnlyOnComplete || ($request->param('Action') == 'finished') ) {
+
+							$set->push($item);
+						}
+					}
+					else {
 						$set->push($item);
 					}
-				}
-				else {
-					$set->push($item);
 				}
 			}
 		}
@@ -80,13 +84,14 @@ class MarkupDecorator_Item extends DataObject {
 		'Location' => 'Enum("Head,Top,Bottom")',
 		'AddToChildren' => 'Boolean',
 		'OnlyOnComplete' => 'Boolean',
+		'OnlyOnLive' => 'Boolean'
 	);
 
 	static $singular_name = 'Markup';
 
 	static $has_one = array(
 		'SiteConfig' => 'SiteConfig',
-		'SiteTree' => 'SiteTree',
+		'SiteTree' => 'SiteTree'
 	);
 
 	static $summary_fields = array('Title', 'Location');
@@ -97,6 +102,7 @@ class MarkupDecorator_Item extends DataObject {
 		$fields->addFieldToTab('Root.Main', $field = new TextareaField('Markup'));
 		$fields->addFieldToTab('Root.Main', $field = FormUtils::getEnumDropdown($this, 'Location'));
 		$fields->addFieldToTab('Root.Main', $field = new CheckboxField('AddToChildren', 'Cascade down to child pages'));
+		$fields->addFieldToTab('Root.Main', $field = new CheckboxField('OnlyOnLive', 'Only used on live site'));
 		if( $this->getParent() instanceof UserDefinedForm ) {
 			$fields->addFieldToTab('Root.Main', $field = new CheckboxField('OnlyOnComplete', 'Only display on complete'));
 		}
