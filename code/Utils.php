@@ -103,7 +103,7 @@ class Utils {
 	 */
 	public static function currentURL() {
 		$base = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-		$protocol = (empty($_SERVER['HTTPS'])) ? 'https' : 'http';
+		$protocol = ( isset($_SERVER["HTTPS"]) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http';
 		return $protocol.'://'.$base;
 	}
 	
