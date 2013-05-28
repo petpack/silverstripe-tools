@@ -20,6 +20,23 @@ class Utils {
 		return $rv;
 	}
 
+	/**
+	 * Grab a URL using cURL and return the document as a string
+	 */
+	public static function getViaCURL( $URL ) {
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_URL, $URL);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+
+		$rv = curl_exec($ch);
+
+		curl_close($ch);
+
+		return $rv;
+	}
+
 	public static function ProjectDir() {
 		return self::BasePath().'/'.project();
 	}
