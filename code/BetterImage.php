@@ -14,6 +14,7 @@ class BetterImage extends Image
 	 * @return string
 	 */
 	function getTag() {
+		$this->ensureNotInsanelyHuge();
 		return preg_replace('|/>$|', $this->getDimensions('tag') . ' />', parent::getTag());
 	}
 	
@@ -22,11 +23,13 @@ class BetterImage extends Image
 	 * The string returned by this version is ready for use in an img tag
 	 * @param string $dim	If this is equal to "tag", return the dimensions in a string formatted for an img tag
 	 *						If equal to "string", return "{height}x{width}
+	 *						If equal to "array", return Array('width' => <int>, 'height' => <int>)
 	 *						If equal to 0 or "width", return width as an integer
 	 *						If equal to 1 or "height", return height as an integer
 	 * @return string|int
 	 */
 	function getDimensions($dim = "string") {
+		$dim = strtolower($dim);
 		if($this->getField('Filename')) {
 			$imagefile = Director::baseFolder() . '/' . $this->getField('Filename');
 			if(file_exists($imagefile)) {
@@ -39,6 +42,11 @@ class BetterImage extends Image
 					$rv = "height=\"{$size[1]}\" width=\"{$size[0]}\"";
 				else if( $dim === 'string' )
 					$rv = "$size[0]x$size[1]";
+				else if ($dim === 'array')
+					$rv = Array(
+						'width'  => $size[0],
+						'height' => $size[1],
+					);
 				else
 					$rv = 'invalid value for $dim';
 				return $rv;
@@ -47,7 +55,17 @@ class BetterImage extends Image
 			}
 		}
 	}
-
+	
+	function validate() {
+		$this->ensureNotInsanelyHuge();
+		return parent::validate();
+	}
+	
+	function onBeforeWrite() {
+		$this->ensureNotInsanelyHuge();
+		return parent::onBeforeWrite();
+	}
+	
 	protected function increaseGDQuality() {
 		$GDQuality = GD::get_default_quality();
 		if( $GDQuality < self::$GDHigherQuality ) {
@@ -65,6 +83,7 @@ class BetterImage extends Image
 	}
 	
 	public function SetWidth($width) {
+		$this->ensureNotInsanelyHuge();
 		$currentWidth = $this->getWidth();
 		if( $width == $currentWidth ) {
 			return $this;
@@ -79,6 +98,7 @@ class BetterImage extends Image
 	}
 
 	public function MaxWidth($width) {
+		$this->ensureNotInsanelyHuge();
 		if($this->getWidth() > $width) {
 			return $this->SetWidth($width);
 		}
@@ -86,6 +106,7 @@ class BetterImage extends Image
 	}
 
 	public function SetHeight($height) {
+		$this->ensureNotInsanelyHuge();
 		if($height == $this->getHeight()){
 			return $this;
 		}
@@ -93,6 +114,7 @@ class BetterImage extends Image
 	}
 
 	public function MaxHeight($height) {
+		$this->ensureNotInsanelyHuge();
 		if($this->getHeight() > $height) {
 			return $this->SetHeight($height);
 		}
@@ -100,6 +122,7 @@ class BetterImage extends Image
 	}
 	
 	public function setMaxSize($width, $height) {
+		$this->ensureNotInsanelyHuge();
 		$fullHeight = $this->getHeight();
 		$fullWidth = $this->getWidth();
 
@@ -110,6 +133,7 @@ class BetterImage extends Image
 	}
 
 	public function SetSize($width, $height) {
+		$this->ensureNotInsanelyHuge();
 		if($width == $this->getWidth() && $height == $this->getHeight()){
 			return $this;
 		}
@@ -118,6 +142,7 @@ class BetterImage extends Image
 	}
 
 	public function SetRatioSize($width, $height) {
+		$this->ensureNotInsanelyHuge();
 		if($width == $this->getWidth() && $height == $this->getHeight()){
 			return $this;
 		}
@@ -125,6 +150,7 @@ class BetterImage extends Image
 	}
 
 	public function SetPaddedSize($width, $height) {
+		$this->ensureNotInsanelyHuge();
 		if( !$width || $width == 'null' ) {
 			$width = $this->getWidth();
 		}
@@ -144,6 +170,7 @@ class BetterImage extends Image
 	 * @author Adam Rice <development@hashnotadam.com>
 	 */
 	public function setResizedSize($width, $height) {
+		$this->ensureNotInsanelyHuge();
 		return $width == $this->getWidth() && $height == $this->getHeight() ?
 					$this :
 					$this->getFormattedImage('ResizedImage', $width, $height);
@@ -151,6 +178,7 @@ class BetterImage extends Image
 	
 	public function getFormattedImage($format, $arg1 = null, $arg2 = null) {
 		if($this->ID && $this->Filename && Director::fileExists($this->Filename)) {
+			$this->ensureNotInsanelyHuge();
 			$size = getimagesize(Director::baseFolder() . '/' . $this->getField('Filename'));
 			$preserveOriginal = false;
 			switch(strtolower($format)){
@@ -177,6 +205,7 @@ class BetterImage extends Image
 			$image = $this->SetRatioSize($width, $height);
 		}
 		$fileName = Director::baseFolder() . '/' . $image->Filename;
+		$this->ensureNotInsanelyHuge();
 		if(file_exists($fileName)) {
 			$url = $image->getURL();
 			if($image->Title && ($image->Title != preg_replace('/\.[a-z0-9]+$/i', '', $image->Filename)) ) {
