@@ -29,7 +29,7 @@ class BetterImage extends Image
 	 * @return string|int
 	 */
 	function getDimensions($dim = "string") {
-		$dim = strtolower($dim);
+		if (!is_numeric($dim)) $dim = strtolower($dim);
 		if($this->getField('Filename')) {
 			$imagefile = Director::baseFolder() . '/' . $this->getField('Filename');
 			if(file_exists($imagefile)) {
