@@ -21,6 +21,15 @@ class Utils {
 	}
 
 	/**
+	 * Remove non-digits from a string
+	 * @param  string $number
+	 * @return string
+	 */
+	public static function cleanNumber($number) {
+		return preg_replace('/[^0-9]/', '', $number);
+	}
+
+	/**
 	 * Grab a URL using cURL and return the document as a string
 	 */
 	public static function getViaCURL( $URL ) {
