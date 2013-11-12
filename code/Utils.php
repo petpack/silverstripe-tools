@@ -33,7 +33,7 @@ class Utils {
 	 * Grab a URL using cURL and return the document as a string
 	 */
 	public static function getViaCURL( $URL ) {
-		if (!$function_exists('curl_init')) {
+		if (!function_exists('curl_init')) {
 			user_error('CURL functions not available - CURL Module not installed?');
 			die();
 		}
