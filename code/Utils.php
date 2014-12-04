@@ -201,22 +201,32 @@ class Utils {
 		}
 	}
 	
+	
 	/**
-	 * Somewhat like abandonRelationships, except good: Removes all records 
+	 * (unused / dangerous - deletes too much!) 
+	 * Somewhat like abandonRelationships, except inclusive: Removes all records 
 	 * 	which are related to the specified dataobject.
 	 * NOTE: requires the loggable extension, since it writes logs to record what it does.
 	 * @param DataObject $obj
 	 */
-	public static function deleteRelatedRecords(DataObject $obj) {
+	public static function deleteRelatedRecords(DataObject $obj,Array $include = null) {
+		
+		//$parents = $obj->;
+		
+		
 		$fields = $obj->has_many();
 		$log = "Removing related records for " . $obj->class . " " . trim($obj->recordTitle()) . "\n";
 		if ($fields) {
 			foreach ($fields as $field => $class) {
+				
+				if ($include && !in_array($field,$include)) continue;
+				
 				$items = $obj->$field();
 				$log .= "Removing has_many '$field' relationships:\n";
 				
 				if ($items && $items->exists()) {
 					foreach($items as $itm) {
+						
 						//error_log("Recursing into related $field ($class objects) for " . $itm->recordTitle());
 						
 						if ($itm->has_many() || $item->has_one())	//only recurse when it makes sense
@@ -233,6 +243,7 @@ class Utils {
 		$fields = $obj->has_one();
 		if ($fields) {
 			foreach ($fields as $field => $class) {
+				if ($include && !in_array($field,$include)) continue;
 				$itm = $obj->$field();
 				$log .= "Removing has_one '$field' relationship.\n - $class with ID: " . $itm->ID . " (" . $itm->recordTitle() . ") removed.\n";
 				$itm->delete();
@@ -254,5 +265,113 @@ class Utils {
 		$rv = str_replace(preg_replace('!/+$!', '', Director::baseFolder()).'/', Director::baseURL(), $path);
 		return $rv;
 	}
+	
+	private  static $usage_cache = Array();
+	
+	/**
+	 * (abandoned) Find references and dataobjects that refer to the given dataobject.
+	 * partial implemenation: doesn't do many-many at all, only gets data
+	 * objects for has_one, is slow.
+	 */
+	function find_usage(DataObject $obj) {
+		
+		if (!$obj->ID) return false;
+		
+		$classname = $obj->class;
+		
+		//if (isset(self::$usage_cache[$classname])) return self::$usage_cache[$classname];
+		
+		$ret = Array();
+		
+		//get all dataobject types:
+		$classes = ClassInfo::subclassesFor("DataObject");
+		
+		//go through them:
+		foreach ($classes as $cls) {
+			
+			$sng = singleton($cls); /** @var DataObject $sng **/
+			//$sng = new DataObject();
+			
+			//$fields = Object::combined_static($cls, 'has_one', 'DataObject'); 
+			$fields = $sng->has_one();
+			if (!$fields) $fields = Array();
+			foreach ($fields as $field => $type) {
+				if ($type == $classname) {
+					
+					if (!isset($ret[$cls])) $ret[$cls]=Array();
+					
+					$cs = null;
+					//this searches the DB for objects pointing to $obj:
+					$cs = DataObject::get($cls,$field . "ID = " . $obj->ID);
+					
+					$ret[$cls][] = Array(
+							'name'=>$field,
+							'type'=>'one',
+							'used_by' => $cs
+					);
+					
+				}
+			}
+			
+			//$hm = Object::combined_static($cls, 'has_many', 'DataObject');
+			
+			$fields = $sng->has_many();
+			if (!$fields) $fields = Array();
+			
+			//$fields = array_merge($fields,$hm);
+			
+			foreach ($fields as $field => $type) {
+				//echo "$cls: $field -> $type\n";
+				if ($type == $classname) {
+					if (!isset($ret[$cls])) $ret[$cls]=Array();
+					//$ret[$cls][] = Array('name'=>$field,'type'=>'many');
+					
+					$cs =null;
+					//$cs = DataObject::get($classname,$cls . "ID = " . $obj->ID);
+					
+					//echo "$cls.$field: $type\n";
+					
+					$ret[$cls][] = Array(
+							'name'=>$field,
+							'type'=>'many',
+							'used_by' => $cs
+					);
+					
+				}
+			}
+			
+			//TODO: 
+			//$fields = $sng->many_many();
+			
+			//not needed:
+			//$fields = DataObject::database_fields($class);
+		
+		}
+		
+		//self::$usage_cache[$classname] = $ret;
+		
+		return $ret;
+	}
 
 }
+
+/* testing code:
+ * 
+ 
+class mert extends PetPackScript {
+	function process() {
+		//$obj = DataObject::get_by_id("Member", 172191);
+		
+		$obj = DataObject::get_by_id("Pet", 59551);
+		
+		
+		//echo $obj->class . "\n";
+		
+		
+		$v = Utils::find_usage($obj);
+		echo "\n\n";
+		var_dump($v);
+	}
+}
+
+*/
