@@ -200,55 +200,6 @@ class Utils {
 			Subsite::restore_previous_subsite();
 		}
 	}
-	
-	/**
-	 * Somewhat like abandonRelationships, except good: Removes all records 
-	 * 	which are related to the specified dataobject.
-	 * NOTE: requires the loggable extension, since it writes logs to record what it does.
-	 * @param DataObject $obj
-	 */
-	public static function deleteRelatedRecords(DataObject $obj) {
-		$fields = $obj->has_many();
-		$log = "Removing related records for " . $obj->class . " " . trim($obj->recordTitle()) . "\n";
-		if ($fields) {
-			foreach ($fields as $field => $class) {
-				$items = $obj->$field();
-				$log .= "Removing has_many '$field' relationships:\n";
-				
-				if ($items && $items->exists()) {
-					foreach($items as $itm) {
-						//error_log("Recursing into related $field ($class objects) for " . $itm->recordTitle());
-						
-						if ($itm->has_many() || $item->has_one())	//only recurse when it makes sense
-							self::deleteRelatedRecords($itm);
-						
-						$log .= " - $class with ID: " . $itm->ID . " (" . $itm->recordTitle() . ") removed.\n";
-						
-						$itm->delete();
-					}
-				}
-			}
-		}
-		
-		$fields = $obj->has_one();
-		if ($fields) {
-			foreach ($fields as $field => $class) {
-				$itm = $obj->$field();
-				$log .= "Removing has_one '$field' relationship.\n - $class with ID: " . $itm->ID . " (" . $itm->recordTitle() . ") removed.\n";
-				$itm->delete();
-			}
-		}
-		
-		error_log($log);
-		
-		if ($log)
-			$obj->CreateLogEntry($log);
-		
-		//$fields = $obj->has_one();
-		
-		//error_log(print_r($fields,true));
-		
-	}
 
 	public static function uriForPath( $path ) {
 		$rv = str_replace(preg_replace('!/+$!', '', Director::baseFolder()).'/', Director::baseURL(), $path);
