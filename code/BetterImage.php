@@ -177,9 +177,9 @@ class BetterImage extends Image
 	}
 	
 	public function getFormattedImage($format, $arg1 = null, $arg2 = null) {
-		if($this->ID && $this->Filename && Director::fileExists($this->Filename)) {
+		if($this->ID && $this->Filename && Director::fileExists($this->getFullPath())) {
 			$this->ensureNotInsanelyHuge();
-			$size = getimagesize(Director::baseFolder() . '/' . $this->getField('Filename'));
+			$size = getimagesize($this->getFullPath());
 			$preserveOriginal = false;
 			switch(strtolower($format)){
 				case 'croppedimage':
