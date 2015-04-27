@@ -177,7 +177,7 @@ class BetterImage extends Image
 	}
 	
 	public function getFormattedImage($format, $arg1 = null, $arg2 = null) {
-		if($this->ID && $this->Filename && Director::fileExists($this->getFullPath())) {
+		if($this->ID && $this->Filename && $this->fileExists()) {
 			$this->ensureNotInsanelyHuge();
 			$size = getimagesize($this->getFullPath());
 			$preserveOriginal = false;
