@@ -226,15 +226,17 @@ class Emogrifier {
                                '/\s+\+\s+/', // Matches any element that is an adjacent sibling.
                                '/\s+/', // Matches any element that is a descendant of an parent element element.
                                '/(\w)\[(\w+)\]/', // Matches element with attribute
+								'/(\w)\[(\w+)\$\=[\'"]?([\.\w]+)[\'"]?\]/', // Matches element with 'ends with' attribute
                                '/(\w)\[(\w+)\=[\'"]?(\w+)[\'"]?\]/', // Matches element with EXACT attribute
                                '/(\w+)?\#([\w\-]+)/e', // Matches id attributes
-                               '/(\w+|[\*\]])?((\.[\w\-]+)+)/e', // Matches class attributes
+                               '/(\w+|[\*\]])?(((?<![\'"])\.[\w\-]+)+)/e', // Matches class attributes
             );
             $replace = array(
                                '/',
                                '/following-sibling::*[1]/self::',
                                '//',
                                '\\1[@\\2]',
+								'\\1[ends-with(@\\2,"\\3")]',
                                '\\1[@\\2="\\3"]',
                                "(strlen('\\1') ? '\\1' : '*').'[@id=\"\\2\"]'",
                                "(strlen('\\1') ? '\\1' : '*').'[contains(concat(\" \",@class,\" \"),concat(\" \",\"'.implode('\",\" \"))][contains(concat(\" \",@class,\" \"),concat(\" \",\"',explode('.',substr('\\2',1))).'\",\" \"))]'",
