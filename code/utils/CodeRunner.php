@@ -13,6 +13,7 @@ class SSTools_Utils_CodeRunner extends SSTools_Utils_CommandLineController {
 	);
 	
 	function process() {
+		die("This is too dodgy to be allowed in my codebase - DM");
 		$code = $this->argValue('code');
 		$file = $this->argValue('file');
 		if (!($code xor $file)) {
