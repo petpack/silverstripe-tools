@@ -64,7 +64,7 @@ class DocumentsPageDecorator_Category extends DataObject {
 
 	static $singular_name = 'Category';
 
-	function getCMSFields() {
+	function getCMSFields($params = null) {
 		$fields = FormUtils::createMain();
 		$fields->addFieldToTab('Root.Main', $field = new TextField('Title'));
 		return $fields;
@@ -91,7 +91,7 @@ class DocumentsPageDecorator_Document extends DataObject {
 
 	static $singular_name = 'Document';
 
-	function getCMSFields() {
+	function getCMSFields($params = null) {
 		$fields = FormUtils::createMain();
 		$fields->addFieldToTab('Root.Main', $field = new TextField('Title'));
 		$fields->addFieldToTab('Root.Main', $field = new SimpleTinyMCEField('Description'));

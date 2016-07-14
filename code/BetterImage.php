@@ -26,7 +26,7 @@ class BetterImage extends Image
 	 *						If equal to "array", return Array('width' => <int>, 'height' => <int>)
 	 *						If equal to 0 or "width", return width as an integer
 	 *						If equal to 1 or "height", return height as an integer
-	 * @return string|int
+	 * @return string|SS_Int
 	 */
 	function getDimensions($dim = "string") {
 		if (!is_numeric($dim)) $dim = strtolower($dim);

@@ -172,7 +172,7 @@ class Utils {
 	 * @param DataObject $caller
 	 * @param string $relationship e.g, a Member belongs to a Group and the relationship is called "Groups"
 	 * @param mixed $subsite integer | DataObject
-	 * @param boolean $removeObjects delete the related object as well as the relationship?
+	 * @param SS_Boolean $removeObjects delete the related object as well as the relationship?
 	 * @author Adam Rice <development@HashNotAdam.com>
 	 */
 	public static function abandonRelationships( $caller, $relationship, $subsite = 0, $removeObjects = false ) {

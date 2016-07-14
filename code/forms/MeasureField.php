@@ -7,12 +7,12 @@ class SSTools_Forms_MeasureField extends CompositeField {
 	
 	/**
 	 * Whether or not to force showing an overall title for the composite field.
-	 * @var boolean
+	 * @var SS_Boolean
 	 */
 	public $ShowTitle = true;
 	
 	/**
-	 * @var $columnCount int Toggle different css-rendering for multiple columns 
+	 * @var $columnCount SS_Int Toggle different css-rendering for multiple columns 
 	 * ("onecolumn", "twocolumns", "threecolumns"). The content is determined
 	 * by the $children-array, so wrap all items you want to have grouped in a
 	 * column inside a CompositeField.

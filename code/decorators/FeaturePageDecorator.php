@@ -78,7 +78,7 @@ class FeaturePageDecorator_Item extends DataObject {
 	static $disabled_fields = array();
 	static $extensions = array('LinkFieldsDecorator');
 
-	public function getCMSFields() {
+	public function getCMSFields($params = null) {
 		$fields = FormUtils::createMain();
 		$fields->addFieldToTab('Root.Main', $field = new TextField('Title'));
 		$fields->addFieldToTab('Root.Main', $field = new SimpleTinyMCEField('Teaser'));

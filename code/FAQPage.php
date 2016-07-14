@@ -21,8 +21,8 @@ class FAQPage extends Page {
 	);
 	static $singular_name = 'FAQ Page';
 
-	public function getCMSFields() {
-		$fields = parent::getCMSFields();
+	public function getCMSFields($params = null) {
+		$fields = parent::getCMSFields($params);
 		$field = $fields->fieldByName('Root.Content.Main.Content'); /* @var $field HTMLEditorField */
 		$field->setRows(5);
 		$fields->addFieldToTab('Root.Content.Main', $field = new HeaderField('FAQ Items'));
@@ -55,7 +55,7 @@ class FAQPage_Item extends DataObject {
 
 	static $singular_name = 'FAQ Item';
 
-	public function getCMSFields() {
+	public function getCMSFields($params = null) {
 		return new FieldSet(array(
 			new TextField('Title'),
 			$field = new SimpleTinyMCEField('Content')

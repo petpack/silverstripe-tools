@@ -7,7 +7,7 @@ class SSTools_StyledEmail extends Email {
 	 */
 	public $CSS = null;
 	
-	public function send() {
+	public function send($messageID = null) {
 		$this->parseVariables();
 		$this->emogrifyBody();
 		return parent::send();

@@ -13,7 +13,7 @@ class FileDataObject extends DataObject {
 
 	static $file_relation = 'File';
 
-	function getCMSFields() {
+	function getCMSFields($params = null) {
 		$fields = self::createMain();
 		$fields->addFieldToTab('Root.Main', $field = new TextField('Title'));
 		$fields->addFieldToTab('Root.Main', $field = new SimpleTinyMCEField('Content'));

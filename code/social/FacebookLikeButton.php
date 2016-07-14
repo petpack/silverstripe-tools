@@ -58,13 +58,13 @@ class SSTools_Social_FacebookLikeButton extends Object implements SSTools_Core_R
 	
 	/**
 	 * Whether or not to show profile pictures below the button.
-	 * @var boolean
+	 * @var SS_Boolean
 	 */
 	public $ShowFaces = true;
 	
 	/**
 	 * Whether or not to include a send button.
-	 * @var boolean
+	 * @var SS_Boolean
 	 */
 	public $IncludeSend = true;
 	

@@ -14,13 +14,13 @@ class LinkListDecorator extends DataObjectDecorator {
 	// @todo Add $db control over $maxNumItems and $forceMultiple
 	/**
 	 * Controls the maximum number of items that will be displayed
-	 * @var int
+	 * @var SS_Int
 	 */ 
 	public static $maxNumItems = null;
 
 	/**
 	 * Specifies that the items should alway be displayed in multiples of X
-	 * @var int
+	 * @var SS_Int
 	 */ 
 	public static $forceMultiple = null;
 
@@ -46,7 +46,7 @@ class LinkListDecorator extends DataObjectDecorator {
 		);
 	}
 
-	function updateCMSFields( FieldSet $fields ) {
+	function updateCMSFields( FieldSet &$fields ) {
 		$this->addManager(
 			$fields,
 			$this->stat('tabName'),
@@ -103,7 +103,7 @@ class LinkListDecorator_Item extends DataObject {
 	static $plural_name = 'Links';
 	static $extensions = array('LinkFieldsDecorator');
 
-	public function getCMSFields() {
+	public function getCMSFields($params = null) {
 		$fields = FormUtils::createMain();
 		LinkFields::addLinkFields($fields);
 		return $fields;

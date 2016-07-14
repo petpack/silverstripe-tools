@@ -96,7 +96,7 @@ class MarkupDecorator_Item extends DataObject {
 
 	static $summary_fields = array('Title', 'Location');
 
-	function getCMSFields() {
+	function getCMSFields($params = null) {
 		$fields = FormUtils::createMain();
 		$fields->addFieldToTab('Root.Main', $field = new TextField('Title'));
 		$fields->addFieldToTab('Root.Main', $field = new TextareaField('Markup'));

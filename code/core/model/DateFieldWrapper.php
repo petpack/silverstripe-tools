@@ -87,7 +87,7 @@ class SSTools_Core_Model_DateFieldWrapper extends Object {
 	/**
 	 * Writes all changes to the wrapped object to the database.
 	 * @see DataObject::write()
-	 * @return int The ID of the record
+	 * @return SS_Int The ID of the record
 	 * @throws ValidationException Exception that can be caught and handled by the calling function
 	 */
 	public function write($showDebug = false, $forceInsert = false, $forceWrite = false, $writeComponents = false) {
