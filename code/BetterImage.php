@@ -9,12 +9,21 @@ class BetterImage extends Image
 	static protected $GDHigherQuality = 90;
 	
 	/**
+	 * Set this to false to not include width and height in tag (the default Image behaviour)
+	 * @var unknown
+	 */
+	public $dimensionsInTag = False;
+	
+	/**
 	 * Image version of getTag does not add width and height
 	 * 
 	 * @return string
 	 */
 	function getTag() {
-		$this->ensureNotInsanelyHuge();
+		
+		if (!$this->dimensionsInTag) 
+			return parent::getTag();
+		
 		return preg_replace('|/>$|', $this->getDimensions('tag') . ' />', parent::getTag());
 	}
 	
